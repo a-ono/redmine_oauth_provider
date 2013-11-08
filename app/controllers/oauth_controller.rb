@@ -16,40 +16,20 @@ class OauthController < ApplicationController
 
   def user_info
     respond_to do |format|
-      format.json { render :json => User.find(session[:user_id]) }
+      format.json { render :json => User.current }
     end
   end
 
   def current_user
-    User.find(session[:user_id])
+    User.current
   end
 
   def current_user=(user)
-    start_user_session(user)
+    self.logged_user = user
   end
-
-  def authorize_with_allow
-    params[:authorize] = '1' if params[:allow]
-    authorize_without_allow
-  end
-  alias_method_chain :authorize, :allow
 
   protected
-  # Override this to match your authorization page form
-  # It currently expects a checkbox called authorize
-  # def user_authorizes_token?
-  #   params[:authorize] == '1'
-  # end
-
-  # should authenticate and return a user if valid password.
-  # This example should work with most Authlogic or Devise. Uncomment it
-  # def authenticate_user(username,password)
-  #   user = User.find_by_email params[:username]
-  #   if user && user.valid_password?(params[:password])
-  #     user
-  #   else
-  #     nil
-  #   end
-  # end
-
+  def user_authorizes_token?
+    params[:allow]
+  end
 end
