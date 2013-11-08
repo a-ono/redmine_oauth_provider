@@ -1,12 +1,11 @@
 class OauthClientsController < ApplicationController
   unloadable
 
-  before_filter :get_user
-  before_filter :get_client_application, :only => [:show, :edit, :update, :destroy]
+  before_filter :require_admin
+  before_filter :find_client_application, :only => [:show, :edit, :update, :destroy]
 
   def index
-    @client_applications = @user.client_applications
-    @tokens = @user.tokens.find :all, :conditions => 'oauth_tokens.invalidated_at is null and oauth_tokens.authorized_at is not null'
+    @client_applications = ClientApplication.all
   end
 
   def new
@@ -14,7 +13,7 @@ class OauthClientsController < ApplicationController
   end
 
   def create
-    @client_application = @user.client_applications.build(params[:client_application])
+    @client_application = ClientApplication.new(params[:client_application])
     if @client_application.save
       flash[:notice] = "Registered the information successfully"
       redirect_to :action => "show", :id => @client_application.id
@@ -45,25 +44,7 @@ class OauthClientsController < ApplicationController
   end
 
   private
-
-  def get_user
-    render_403 unless User.current.logged?
-
-    if params[:user_id] && params[:user_id] != User.current.id.to_s
-      if User.current.admin?
-        @user = User.find(params[:user_id])
-      else
-        render_403
-      end
-    else
-      @user = User.current
-    end
-  end
-
-  def get_client_application
-    unless @client_application = @user.client_applications.find(params[:id])
-      flash.now[:error] = "Wrong application id"
-      raise ActiveRecord::RecordNotFound
-    end
+  def find_client_application
+    @client_application = ClientApplication.find(params[:id])
   end
 end

@@ -15,11 +15,7 @@ Redmine 2.3
 
 == Manage your client applications
 
-Access to
-
-    http://your.redmine.host/oauth_clients/
-
-And register your applications.
+Administration > OAuth Client Applications
 
 == OAuth URL
 
