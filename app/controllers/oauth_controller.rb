@@ -16,7 +16,7 @@ class OauthController < ApplicationController
 
   def user_info
     respond_to do |format|
-      format.json { render :json => User.current }
+      format.json { render :json => User.current.to_json(only: [:login, :firstname, :lastname], methods: [:mail]) }
     end
   end
 

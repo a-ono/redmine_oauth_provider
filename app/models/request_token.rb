@@ -35,7 +35,7 @@ class RequestToken < OauthToken
   end
 
   def oauth10?
-    (defined? OAUTH_10_SUPPORT) && OAUTH_10_SUPPORT && self.callback_url.blank?
+    true
   end
 
 end
